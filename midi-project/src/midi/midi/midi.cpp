@@ -165,180 +165,180 @@ namespace midi {
 	// ChannelNoteCollector =====================================
 	// ==========================================================
 
-	void ChannelNoteCollector::note_on
-	(Duration dt, Channel channel, 
-		NoteNumber notee, uint8_t velocity)
-	{
-		if (velocity == 0)
-		{
-			this->note_off(dt, channel, notee, velocity);
-		}
-		else
-		{
-			this->time += dt;
-			if (channel == this->channel)
-			{
-				if(this->velos[value(notee)] != 6969)
-				{
-					this->note_off(Duration(0), channel, 
-						notee, velocity);
-				}
-				this->tijdjes[value(notee)] = this->time;
-				this->velos[value(notee)] = velocity;
-			}
-		}
-	}
-	void ChannelNoteCollector::note_off
-	(Duration dt, Channel channel, 
-		NoteNumber note, uint8_t velocity)
-	{
-		this->time += dt;
-		if (channel == this->channel)
-		{
-			NOTE n = NOTE(
-				note,
-				this->tijdjes[value(note)],
-				this->time - this->tijdjes[value(note)],
-				this->velos[value(note)],
-				this->instr);
-			receiver(n);
-			this->velos[value(note)] = 6969;
-		}
-	}
+	//void ChannelNoteCollector::note_on
+	//(Duration dt, Channel channel, 
+	//	NoteNumber notee, uint8_t velocity)
+	//{
+	//	if (velocity == 0)
+	//	{
+	//		this->note_off(dt, channel, notee, velocity);
+	//	}
+	//	else
+	//	{
+	//		this->time += dt;
+	//		if (channel == this->channel)
+	//		{
+	//			if(this->velos[value(notee)] != 6969)
+	//			{
+	//				this->note_off(Duration(0), channel, 
+	//					notee, velocity);
+	//			}
+	//			this->tijdjes[value(notee)] = this->time;
+	//			this->velos[value(notee)] = velocity;
+	//		}
+	//	}
+	//}
+	//void ChannelNoteCollector::note_off
+	//(Duration dt, Channel channel, 
+	//	NoteNumber note, uint8_t velocity)
+	//{
+	//	this->time += dt;
+	//	if (channel == this->channel)
+	//	{
+	//		NOTE n = NOTE(
+	//			note,
+	//			this->tijdjes[value(note)],
+	//			this->time - this->tijdjes[value(note)],
+	//			this->velos[value(note)],
+	//			this->instr);
+	//		receiver(n);
+	//		this->velos[value(note)] = 6969;
+	//	}
+	//}
 
 
-	void ChannelNoteCollector::polyphonic_key_pressure
-	(Duration dt, Channel channel, 
-		NoteNumber note, uint8_t pressure)
-	{
-		this->time += dt;
-	}
-	void ChannelNoteCollector::control_change
-	(Duration dt, Channel channel, 
-		uint8_t controller, uint8_t value)
-	{
-		this->time += dt;
-	}
-	void ChannelNoteCollector::program_change
-	(Duration dt, Channel channel, Instrument program)
-	{
-		this->time += dt;
-		if (this->channel == channel) 
-		{
-			this->instr = program;
-		}
-	}
-	void ChannelNoteCollector::channel_pressure
-	(Duration dt, Channel channel, uint8_t pressure)
-	{
-		this->time += dt;
-	}
-	void ChannelNoteCollector::pitch_wheel_change
-	(Duration dt, Channel channel, uint16_t value)
-	{
-		this->time += dt;
-	}
-	void ChannelNoteCollector::meta
-	(Duration dt, uint8_t type, 
-		std::unique_ptr<uint8_t[]> data, 
-		uint64_t data_size)
-	{
-		this->time += dt;
-	}
-	void ChannelNoteCollector::sysex
-	(Duration dt, std::unique_ptr<uint8_t[]> data, 
-		uint64_t data_size)
-	{
-		this->time += dt;
-	}
+	//void ChannelNoteCollector::polyphonic_key_pressure
+	//(Duration dt, Channel channel, 
+	//	NoteNumber note, uint8_t pressure)
+	//{
+	//	this->time += dt;
+	//}
+	//void ChannelNoteCollector::control_change
+	//(Duration dt, Channel channel, 
+	//	uint8_t controller, uint8_t value)
+	//{
+	//	this->time += dt;
+	//}
+	//void ChannelNoteCollector::program_change
+	//(Duration dt, Channel channel, Instrument program)
+	//{
+	//	this->time += dt;
+	//	if (this->channel == channel) 
+	//	{
+	//		this->instr = program;
+	//	}
+	//}
+	//void ChannelNoteCollector::channel_pressure
+	//(Duration dt, Channel channel, uint8_t pressure)
+	//{
+	//	this->time += dt;
+	//}
+	//void ChannelNoteCollector::pitch_wheel_change
+	//(Duration dt, Channel channel, uint16_t value)
+	//{
+	//	this->time += dt;
+	//}
+	//void ChannelNoteCollector::meta
+	//(Duration dt, uint8_t type, 
+	//	std::unique_ptr<uint8_t[]> data, 
+	//	uint64_t data_size)
+	//{
+	//	this->time += dt;
+	//}
+	//void ChannelNoteCollector::sysex
+	//(Duration dt, std::unique_ptr<uint8_t[]> data, 
+	//	uint64_t data_size)
+	//{
+	//	this->time += dt;
+	//}
 
-	// ========================================================
-	// EventMultiCaster =======================================
-	// ========================================================
+	//// ========================================================
+	//// EventMultiCaster =======================================
+	//// ========================================================
 
-	void EventMulticaster::note_on(Duration dt, Channel channel, NoteNumber note, uint8_t velocity)
-	{
-		for(std::shared_ptr<EventReceiver> event : this->note_filters)
-		{
-			event->note_on(dt, channel, note, velocity);
-		}
-	}
-	void EventMulticaster::note_off(Duration dt, Channel channel, 
-		NoteNumber note, uint8_t velocity)
-	{
-		for (std::shared_ptr<EventReceiver> event : this->note_filters)
-		{
-			event->note_off(dt, channel, note, velocity);
-		}
-	}
-	void EventMulticaster::polyphonic_key_pressure(Duration dt, 
-		Channel channel, NoteNumber note, uint8_t pressure)
-	{
-		for (std::shared_ptr<EventReceiver> event : this->note_filters)
-		{
-			event->polyphonic_key_pressure(dt, channel, note, pressure);
-		}
-	}
-	void EventMulticaster::control_change(Duration dt, 
-		Channel channel, uint8_t controller, uint8_t value)
-	{
-		for (std::shared_ptr<EventReceiver> event : this->note_filters)
-		{
-			event->control_change(dt, channel, controller, value);
-		}
-	}
-	void EventMulticaster::program_change(Duration dt,
-		Channel channel, Instrument program)
-	{
-		for (std::shared_ptr<EventReceiver> event : this->note_filters)
-		{
-			event->program_change(dt, channel, program);
-		}
-	}
-	void EventMulticaster::channel_pressure(Duration dt,
-		Channel channel, uint8_t pressure)
-	{
-		for (std::shared_ptr<EventReceiver> event : this->note_filters)
-		{
-			event->channel_pressure(dt, channel, pressure);
-		}
-	}
-	void EventMulticaster::pitch_wheel_change(Duration dt,
-		Channel channel, uint16_t value)
-	{
-		for (std::shared_ptr<EventReceiver> event : this->note_filters)
-		{
-			event->pitch_wheel_change(dt, channel, value);
-		}
-	}
+	//void EventMulticaster::note_on(Duration dt, Channel channel, NoteNumber note, uint8_t velocity)
+	//{
+	//	for(std::shared_ptr<EventReceiver> event : this->note_filters)
+	//	{
+	//		event->note_on(dt, channel, note, velocity);
+	//	}
+	//}
+	//void EventMulticaster::note_off(Duration dt, Channel channel, 
+	//	NoteNumber note, uint8_t velocity)
+	//{
+	//	for (std::shared_ptr<EventReceiver> event : this->note_filters)
+	//	{
+	//		event->note_off(dt, channel, note, velocity);
+	//	}
+	//}
+	//void EventMulticaster::polyphonic_key_pressure(Duration dt, 
+	//	Channel channel, NoteNumber note, uint8_t pressure)
+	//{
+	//	for (std::shared_ptr<EventReceiver> event : this->note_filters)
+	//	{
+	//		event->polyphonic_key_pressure(dt, channel, note, pressure);
+	//	}
+	//}
+	//void EventMulticaster::control_change(Duration dt, 
+	//	Channel channel, uint8_t controller, uint8_t value)
+	//{
+	//	for (std::shared_ptr<EventReceiver> event : this->note_filters)
+	//	{
+	//		event->control_change(dt, channel, controller, value);
+	//	}
+	//}
+	//void EventMulticaster::program_change(Duration dt,
+	//	Channel channel, Instrument program)
+	//{
+	//	for (std::shared_ptr<EventReceiver> event : this->note_filters)
+	//	{
+	//		event->program_change(dt, channel, program);
+	//	}
+	//}
+	//void EventMulticaster::channel_pressure(Duration dt,
+	//	Channel channel, uint8_t pressure)
+	//{
+	//	for (std::shared_ptr<EventReceiver> event : this->note_filters)
+	//	{
+	//		event->channel_pressure(dt, channel, pressure);
+	//	}
+	//}
+	//void EventMulticaster::pitch_wheel_change(Duration dt,
+	//	Channel channel, uint16_t value)
+	//{
+	//	for (std::shared_ptr<EventReceiver> event : this->note_filters)
+	//	{
+	//		event->pitch_wheel_change(dt, channel, value);
+	//	}
+	//}
 
-	std::unique_ptr<uint8_t[]> copy(std::unique_ptr<uint8_t[]>& p, uint64_t data_size)
-	{
-		auto result = std::make_unique<uint8_t[]>(data_size);
-		for (int i = 0; i != data_size; ++i)
-		{
-			result[i] = p[i];
-		}
-		return result;
-	}
+	//std::unique_ptr<uint8_t[]> copy(std::unique_ptr<uint8_t[]>& p, uint64_t data_size)
+	//{
+	//	auto result = std::make_unique<uint8_t[]>(data_size);
+	//	for (int i = 0; i != data_size; ++i)
+	//	{
+	//		result[i] = p[i];
+	//	}
+	//	return result;
+	//}
 
-	void EventMulticaster::meta(Duration dt, uint8_t type,
-		std::unique_ptr<uint8_t[]> data, uint64_t data_size)
-	{
-		for (std::shared_ptr<EventReceiver> event : this->note_filters)
-		{
-			event->meta(dt, type, std::move(copy(data, data_size)), data_size);
-		}
-	}
+	//void EventMulticaster::meta(Duration dt, uint8_t type,
+	//	std::unique_ptr<uint8_t[]> data, uint64_t data_size)
+	//{
+	//	for (std::shared_ptr<EventReceiver> event : this->note_filters)
+	//	{
+	//		event->meta(dt, type, std::move(copy(data, data_size)), data_size);
+	//	}
+	//}
 
-	void EventMulticaster::sysex(Duration dt,
-		std::unique_ptr<uint8_t[]> data, uint64_t data_size)
-	{
-		for (std::shared_ptr<EventReceiver> event : this->note_filters)
-		{
-			event->sysex(dt, std::move(copy(data,data_size)), data_size);
-		}
-	}
+	//void EventMulticaster::sysex(Duration dt,
+	//	std::unique_ptr<uint8_t[]> data, uint64_t data_size)
+	//{
+	//	for (std::shared_ptr<EventReceiver> event : this->note_filters)
+	//	{
+	//		event->sysex(dt, std::move(copy(data,data_size)), data_size);
+	//	}
+	//}
 
 	// ========================================================
 	// NoteCollector ==========================================
